@@ -34,7 +34,7 @@
   <p class="authintro">Sign in with your staff email address and password to manage reservations.</p>
   <div id="authMessage" class="authmessage" role="status">Use your authorized staff account.</div>
   <form id="loginForm" class="authform">
-   <label>Email address<input id="authEmail" type="email" autocomplete="username" required placeholder="staff@example.com"></label>
+   <label>Email address<input id="authEmail" type="email" autocomplete="username" required placeholder="staff fullname@islandbreeze.com"></label>
    <label>Password<input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters"></label>
    <button class="btn authsubmit" type="submit">Sign in</button>
   </form>
@@ -60,7 +60,7 @@
 <section class="page" id="page-dashboard"><div class="head"><div><div class="eyebrow">GUESTHOUSE OVERVIEW</div><h2>Good day, manager.</h2><p class="sub">Live information loaded from your Supabase database.</p></div><button class="btn" data-action="reservation">＋ New reservation</button></div>
 <div class="stats"><div class="stat"><div class="statlabel">Total rooms</div><div class="statvalue" id="sRooms">—</div><div class="statfoot">Registered rooms</div></div><div class="stat"><div class="statlabel">Guests</div><div class="statvalue" id="sGuests">—</div><div class="statfoot">Guest records</div></div><div class="stat"><div class="statlabel">Reservations</div><div class="statvalue" id="sRes">—</div><div class="statfoot">All booking records</div></div><div class="stat"><div class="statlabel">Payments received</div><div class="statvalue" id="sPayments">—</div><div class="statfoot">Payments marked paid</div></div></div>
 <div class="tropical-hero"><div><h3>Welcome to Island Breeze</h3><p>A relaxed Caribbean-inspired stay, surrounded by sea views, tropical gardens and warm island hospitality.</p></div></div>
-<div class="columns"><div class="panel"><div class="panelhead"><h3>Recent reservations</h3><button class="btn secondary small" data-page="reservations">View all</button></div><div class="tablewrap"><table><thead><tr><th>Booking</th><th>Guest</th><th>Room</th><th>Dates</th><th>Status</th></tr></thead><tbody id="recentRows"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table></div></div><div class="panel"><div class="panelhead"><h3>Connection status</h3></div><div class="panelbody"><p class="help" id="connectText">Connecting to Supabase…</p><div class="note">Only use your Supabase project URL and publishable/anon key in this browser app. Never put a service-role or secret key in HTML.</div></div></div></div>
+<div class="columns"><div class="panel"><div class="panelhead"><h3>Recent reservations</h3><button class="btn secondary small" data-page="reservations">View all</button></div><div class="tablewrap"><table><thead><tr><th>Booking</th><th>Guest</th><th>Room</th><th>Dates</th><th>Status</th></tr></thead><tbody id="recentRows"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table></div></div><div class="panel"><div class="panelhead"><h3>Connection status</h3></div><div class="panelbody"><p class="help" id="connectText">Connecting to Supabase…</p><div class="note"> </div></div></div></div>
 <div class="tropical-gallery" aria-label="Island Breeze tropical property imagery">
  <div class="tropical-tile"><img src="images/tropical-garden.jpg" alt="Lush tropical garden path with palms and flowers"><span>Tropical gardens</span></div>
  <div class="tropical-tile"><img src="images/guesthouse-veranda.jpg" alt="Bright guesthouse veranda with comfortable seating"><span>Relaxing island spaces</span></div>
@@ -77,8 +77,8 @@
 <div class="backdrop hidden" id="backdrop"><div class="modal"><div class="modalhead"><h3 id="modalTitle">Add record</h3><button class="close" id="close">×</button></div><div class="modalbody"><form id="form"><div class="formgrid" id="fields"></div><div class="formactions"><button type="button" class="btn secondary" id="cancel">Cancel</button><button class="btn" type="submit">Save to Supabase</button></div></form></div></div></div><div class="toast hidden" id="toast"></div>
 <script>
 /* Supabase browser configuration: use only a publishable/anon key, never a service-role key. */
-const SUPABASE_URL = "https://qynpiibshvryqxjyvygv.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_pabnb3nOhFrxcdAXLY49MA_PN7TtXwM";
+const SUPABASE_URL = "https://vkmksucdlrrdcyrpklym.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_8Qb84RAx3Ocm-Pqt-hOqHQ_GmKsdsa4";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
 const $ = id => document.getElementById(id);
 let currentSession = null;
@@ -98,7 +98,7 @@ async function enterWorkspace(session) {
  await loadData();
 }
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('authEmail').value.trim();const password=$('authPassword').value;authMessage('Signing in…');const {data,error}=await db.auth.signInWithPassword({email,password});if(error){authMessage(error.message,'error');return;}await enterWorkspace(data.session);});
-$('signupForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('signupEmail').value.trim();const password=$('signupPassword').value;if(password.length<8){authMessage('Use a password with at least 8 characters.','error');return;}authMessage('Creating account…');const {data,error}=await db.auth.signUp({email,password});if(error){authMessage(error.message,'error');return;}authMessage('Account created. If email confirmation is enabled, confirm the message sent to your inbox. Then ask the project administrator to authorize this account in public.staff_users before signing in.','success');e.target.reset();});
+$('signupForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('signupEmail').value.trim();const password=$('signupPassword').value;if(password.length<8){authMessage('Use a password with at least 8 characters.','error');return;}authMessage('Creating account…');const {data,error}=await db.auth.signUp({email,password});if(error){authMessage(error.message,'error');return;}authMessage('Account created. The administrator will authorize this account before signing in.','success');e.target.reset();});
 $('signOutBtn').addEventListener('click',async()=>{await db.auth.signOut();location.reload();});
 db.auth.onAuthStateChange((_event,session)=>{ if(_event==='SIGNED_OUT'){currentSession=null;$('appShell').classList.add('hidden');$('authGate').classList.remove('hidden');} });
 const today = new Date().toISOString().slice(0,10);
